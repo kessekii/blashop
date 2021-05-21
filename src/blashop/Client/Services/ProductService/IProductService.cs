@@ -5,7 +5,7 @@ using blashop.Shared;
 
 namespace blashop.Client.Services.ProductService
 {
-    interface IProductService
+    public interface IProductService
     {
         event Action OnChange;
 

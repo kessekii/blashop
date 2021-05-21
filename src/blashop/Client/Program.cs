@@ -9,6 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using blashop.Client.Services.ProductService;
 using blashop.Client.Services.CategoryService;
+using Blazored.LocalStorage;
+using Blazored.Toast;
+using blashop.Client.Services.CartService;
+using blashop.Client.Services.StatsService;
+using Microsoft.AspNetCore.Components.Authorization;
+
 namespace blashop.Client
 {
     public class Program
@@ -21,6 +27,12 @@ namespace blashop.Client
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddBlazoredToast();
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+            builder.Services.AddScoped<ICartService, CartService>();
+            builder.Services.AddScoped<IStatsService, StatsService>();
             await builder.Build().RunAsync();
         }
     }

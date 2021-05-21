@@ -1,0 +1,16 @@
+{
+  "hosting": {
+    "public": "/src/blashop/Server/bin/Release/net5.0/publish",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

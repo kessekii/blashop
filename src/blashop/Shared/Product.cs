@@ -15,6 +15,8 @@ namespace blashop.Shared
 
         public decimal OriginalPrice { get; set; }
 
+        public int DiscontScore { get; set; }
+
         public bool IsPublic { get; set; }
 
         public bool IsDeleted { get; set; }
