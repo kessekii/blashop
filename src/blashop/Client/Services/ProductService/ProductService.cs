@@ -31,7 +31,6 @@ namespace blashop.Client.Services.ProductService
                 Products = await _http.GetFromJsonAsync<List<Product>>($"api/Product/Category/{categoryUrl}");
             }
 
-
             OnChange.Invoke();
 
         }

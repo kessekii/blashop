@@ -12,6 +12,8 @@ using blashop.Server.Services.ProductService;
 using blashop.Server.Services.StatsService;
 using blashop.Server.Data;
 
+using blashop.Shared;
+
 namespace blashop.Server
 {
     public class Startup
@@ -27,9 +29,13 @@ namespace blashop.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var sqlstring = "Server=fishmrk-srv.postgres.database.azure.com;Database=postgres;Port=5432;User Id=kessekii@fishmrk-srv;Password=94Wert123;Ssl Mode=Require;";
+
             services.AddDbContext<DataContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddDbContext<DataContext>(options => options.UseNpgsql(sqlstring));
+            services.AddScoped<IDataAccessProvider, DataAccessPostgreSqlProvider>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IStatsService, StatsService>();

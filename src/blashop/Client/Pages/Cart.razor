@@ -2,6 +2,8 @@
 @inject ICartService CartService
 @inject ILocalStorageService LocalStorage
 
+@inject IDataAccessProvider DataAccessPostgreSqlProvider
+
 @if (!orderPlaced)
 {
     <h3>Shopping Cart</h3>
@@ -77,6 +79,7 @@ else
 @code {
 
     List<CartItem> cartItems = new List<CartItem>();
+    User user = new User();
     bool orderPlaced = false;
     private string adress = "a";
 
@@ -96,10 +99,19 @@ else
     private async void HandleAdress()
     {
         await LocalStorage.SetItemAsync<string>("adress", adress);
+
+        foreach(var item in cartItems)
+            {
+                DataAccessPostgreSqlProvider.AddRecord(item);
+            }
+        
+
+
     }
     private async Task PlaceOrder()
     {
         orderPlaced = true;
+
         await CartService.EmptyCart();
     }
 }
