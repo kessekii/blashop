@@ -62,7 +62,7 @@ namespace blashop.Client.Services.CartService
                 return;
             }
 
-            var cartItem = cart.Find(x => x.ProductId == item.ProductId && x.EditionId == item.EditionId);
+            var cartItem = cart.Find(x => x.ProductId == item.ProductId);
             cart.Remove(cartItem);
 
             await _localStorage.SetItemAsync("cart", cart);

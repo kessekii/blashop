@@ -1,8 +1,11 @@
 ﻿@page "/cart"
+
+@using Microsoft.Extensions.Configuration
+
 @inject ICartService CartService
 @inject ILocalStorageService LocalStorage
-
-@inject IDataAccessProvider DataAccessPostgreSqlProvider
+@inject IDataAccess _data
+@inject IConfiguration _config
 
 @if (!orderPlaced)
 {
@@ -20,7 +23,7 @@
                     <div class="item-image-wrapper"><img src="@item.Image" class="item-image" /></div>
                     <div class="item-name">
                         <h5><a href="/product/@item.ProductId">@item.ProductTitle</a></h5>
-                        <span>@item.EditionName</span><br />
+
                         <button class="btn-delete" @onclick="@(() => DeleteItem(item))">Delete</button>
                         <EditForm Model="item">
                             <InputNumber id="quantity" @bind-Value="item.Quantity"
@@ -30,16 +33,16 @@
                     <div class="item-price">₪@(item.Price * item.Quantity)</div>
                 </div>
             }
-        <div class="item-price">
-            Total (@cartItems.Count): ₪@cartItems.Sum(item => item.Price * item.Quantity)
-        </div>
+            <div class="item-price">
+                Total (@cartItems.Count): ₪@cartItems.Sum(item => item.Price * item.Quantity)
+            </div>
             <div style="text-align: center; margin-top: 10px;">
                 <EditForm Model="adress" OnSubmit="HandleAdress">
                     <div class="form-group">
                         <label for="adress">Adress</label>
                         <InputText id="adress" @bind-Value="adress" class="form-control" />
                     </div>
-                    
+
                     <button type="submit" class="btn btn-primary">Submit adress</button>
                 </EditForm>
 
@@ -59,20 +62,20 @@ else
                 <div class="item-image-wrapper"><img src="@item.Image" class="item-image" /></div>
                 <div class="item-name">
                     <h5><a href="/product/@item.ProductId">@item.ProductTitle</a></h5>
-                    <span>@item.EditionName</span><br />
+
                 </div>
                 <div class="item-price">$@(item.Price * item.Quantity)</div>
                 <div class="item-discont">$@(item.DiscontCount * item.Quantity)</div>
             </div>
         }
-    <div class="item-price">
-        Total (@cartItems.Count): ₪@cartItems.Sum(item => item.Price * item.Quantity)
+        <div class="item-price">
+            Total (@cartItems.Count): ₪@cartItems.Sum(item => item.Price * item.Quantity)
 
-    </div>
+        </div>
         <div class="item-discont">
-        
-        EARNED SCORE! (@cartItems.Count): @cartItems.Sum(item => item.DiscontCount * item.Quantity)
-    </div>
+
+            EARNED SCORE! (@cartItems.Count): @cartItems.Sum(item => item.DiscontCount * item.Quantity)
+        </div>
     </div>
 }
 
@@ -96,15 +99,22 @@ else
         await CartService.DeleteItem(item);
         cartItems = await CartService.GetCartItems();
     }
-    private async void HandleAdress()
+    private async Task HandleAdress()
     {
         await LocalStorage.SetItemAsync<string>("adress", adress);
 
         foreach(var item in cartItems)
-            {
-                DataAccessPostgreSqlProvider.AddRecord(item);
-            }
-        
+        {
+            string sql = "insert into orders (ProductId, Price, Image, Quantity, DiscontCount) values (item.ProductId, item.Price, item.Image, item.Quantity, item.DiscontCount);";
+
+            await _data.SaveData(sql, new {
+                ProductId = item.ProductId,
+                Price = item.Price,
+                Image = item.Image,
+                Quantity = item.Quantity,
+                DiscontCount = item.DiscontCount
+            }, _config.GetConnectionString("default"));
+        }
 
 
     }

@@ -14,7 +14,7 @@ using Blazored.Toast;
 using Microsoft.EntityFrameworkCore;
 using blashop.Client.Services.CartService;
 using blashop.Client.Services.StatsService;
-using blashop.Client.DataClient;
+
 using Microsoft.AspNetCore.Components.Authorization;
 using blashop.Shared;
 
@@ -28,15 +28,15 @@ namespace blashop.Client
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
-            var sqlstring = "Server=fishmrk-srv.postgres.database.azure.com;Database=postgres;Port=5432;User Id=kessekii@fishmrk-srv;Password=94Wert123;Ssl Mode=Require;";
-            builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(sqlstring));
+            
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddBlazoredToast();
             builder.Services.AddAuthorizationCore();
-            builder.Services.AddScoped<IDataAccessProvider, DataAccessPostgreSqlProvider>();
+            builder.Services.AddSingleton<IDataAccess, DataAccess>();
+
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
             builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<IStatsService, StatsService>();

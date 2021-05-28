@@ -34,7 +34,7 @@ namespace blashop.Server
             services.AddDbContext<DataContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
-            services.AddDbContext<DataContext>(options => options.UseNpgsql(sqlstring));
+            services.AddSingleton<IDataAccess, DataAccess>();
             services.AddScoped<IDataAccessProvider, DataAccessPostgreSqlProvider>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
